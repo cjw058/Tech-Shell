@@ -72,30 +72,6 @@ char* CommandPrompt(){
     return 0;
 
 }
-char* CommandPrompt() {
-    char cwd[PATH_MAX];
-    if (getcwd(cwd, sizeof(cwd)) == NULL) {
-        fprintf(stderr, "Error %d (%s)\n", errno, strerror(errno));
-        strcpy(cwd, ""); // fallback prompt
-    }
-
-    printf("%s$ ", cwd);
-    fflush(stdout);
-
-    char line[4096];
-    if (fgets(line, sizeof(line), stdin) == NULL) {
-        // EOF (Ctrl+D) or input error -> exit gracefully
-        printf("\n");
-        exit(0);
-    }
-
-    // Strip trailing newline
-    line[strcspn(line, "\n")] = '\0';
-
-    // Return heap copy so caller can keep it
-    return strdup(line);
-}
-
 
 struct ShellCommand ParseCommandLine(char* input) {
     struct ShellCommand cmd;
