@@ -26,8 +26,27 @@ int main() {
         // parse the command line
         command = ParseCommandLine(input);
         // execute the command
-        ExecuteCommand(command);
+        ExecuteCommand(command);S
     }
     exit(0);
+
+}
+
+char* CommandPrompt(){
+    char cwd[1024];
+    if (getcwd(cwd, sizeof(cwd)) != NULL){
+        printf("%s$ \n", cwd)
+    } else {
+        perror("Directory get error.");
+        printf("$ ")
+    }
+
+    char *line[1024];
+
+    fgets(line, sizeof(line), stdin);
+
+    line[strcspn(line, "\n")] = 0;
+    
+    return 0;
 
 }
