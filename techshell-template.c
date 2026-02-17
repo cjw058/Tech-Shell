@@ -36,10 +36,12 @@ int main() {
     for (;;)
     {
         input = CommandPrompt();
+
         if (input[0] == '\0') {   // user just hit Enter
             free(input);
             continue;
         }
+	
         // parse the command line
         command = ParseCommandLine(input);
         // execute the command
@@ -54,6 +56,7 @@ int main() {
 
 }
 
+<<<<<<< HEAD
 char* CommandPrompt(){
     char cwd[1024];
     if (getcwd(cwd, sizeof(cwd)) != NULL){
@@ -66,6 +69,26 @@ char* CommandPrompt(){
     char *line[1024];
 
     fgets(line, sizeof(line), stdin);
+=======
+char* CommandPrompt() {
+	// getcwd() fetches the current working directory 
+    char cwd[PATH_MAX];
+    if (getcwd(cwd, sizeof(cwd)) == NULL) {
+        fprintf(stderr, "Error %d (%s)\n", errno, strerror(errno));
+        strcpy(cwd, ""); // fallback prompt
+    }
+
+    printf("%s$ ", cwd);
+    //fflush(stdout);
+	
+    // fgets() takes in the 
+    char line[4096];
+    if (fgets(line, sizeof(line), stdin) == NULL) {
+        // EOF (Ctrl+D) or input error -> exit gracefully
+        printf("\n");
+        exit(0);
+    }
+>>>>>>> c577d3b768081d0a0078781b82de7520fc213c13
 
     line[strcspn(line, "\n")] = 0;
     
@@ -108,19 +131,35 @@ struct ShellCommand ParseCommandLine(char* input) {
 
 
 void ExecuteCommand(struct ShellCommand command) {
-    printf("Command:\n");
+    if (command.argv == NULL || command.argv[0] == NULL)
+    	return;
+    
+    pid_t pid = fork();
 
-    if (command.argv == NULL || command.argv[0] == NULL) {
-        printf("  (empty)\n");
+
+    // process couldn't be creatd, hence -ve
+    if (pid < 0) {
+        fprintf(stderr, "Error %d (%s)\n", errno, strerror(errno));
         return;
     }
 
-    for (int i = 0; command.argv[i] != NULL; i++) {
-        printf("  argv[%d] = %s\n", i, command.argv[i]);
-    }
 
-    if (command.in_file)  printf("  Input redirection: %s\n", command.in_file);
-    if (command.out_file) printf("  Output redirection: %s\n", command.out_file);
+    if (pid == 0){
+        execvp(command.argv[0], command.argv);
+
+	// only if anything wrong is typed in (e.g. an invalid flag, typos, etc.)
+	fprintf(stderr, "Error %d (%s)\n", errno, strerror(errno));
+        exit(1);
+
+    	}
+
+    // parent: wait for child to finish
+    else {
+        int status;
+        waitpid(pid, &status, 0);
+	}
+
+
 }
 
 // Helper to free cmd after every execution
