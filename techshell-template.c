@@ -23,6 +23,7 @@ void ExecuteCommand(struct ShellCommand command); //Execute a shell command
 void FreeCommand(struct ShellCommand *cmd);
 
 static void redirect_handler(char **args);
+
 struct ShellCommand {
     char **argv;      // execvp args (argv[0] is command, last must be NULL)
     char *in_file;    // filename after <
@@ -46,7 +47,6 @@ int main() {
         // parse the command line
         command = ParseCommandLine(input);
         // execute the command
-        ExecuteCommand(command);S
         ExecuteCommand(command);
 
         // Freeing the command to avoid memory leakage (segmentation fault)
@@ -57,23 +57,28 @@ int main() {
 
 }
 
-char* CommandPrompt(){
-    char cwd[1024];
-    if (getcwd(cwd, sizeof(cwd)) != NULL){
-        printf("%s$ \n", cwd)
-    } else {
-        perror("Directory get error.");
-        printf("$ ")
+char* CommandPrompt() {
+    char cwd[PATH_MAX];
+    if (getcwd(cwd, sizeof(cwd)) == NULL) {
+        fprintf(stderr, "Error %d (%s)\n", errno, strerror(errno));
+        strcpy(cwd, ""); // fallback prompt
     }
 
-    char *line[1024];
+    printf("%s$ ", cwd);
+    fflush(stdout);
 
-    fgets(line, sizeof(line), stdin);
+    char line[4096];
+    if (fgets(line, sizeof(line), stdin) == NULL) {
+        // EOF (Ctrl+D) or input error -> exit gracefully
+        printf("\n");
+        exit(0);
+    }
 
-    line[strcspn(line, "\n")] = 0;
-    
-    return 0;
+    // Strip trailing newline
+    line[strcspn(line, "\n")] = '\0';
 
+    // Return heap copy so caller can keep it
+    return strdup(line);
 }
 
 struct ShellCommand ParseCommandLine(char* input) {
@@ -114,9 +119,9 @@ void ExecuteCommand(struct ShellCommand command) {
     if (command.argv == NULL || command.argv[0] == NULL)
     	return;
 
-        if (strcmp(command.argv[0], "exit") == 0){
-            exit(0);
-        }
+    if (strcmp(command.argv[0], "exit") == 0){
+        exit(0);
+    }
 
     
     if (strcmp(command.argv[0], "cd") == 0){
@@ -162,6 +167,8 @@ void ExecuteCommand(struct ShellCommand command) {
 
 }
 
+
+/*
 static void redirect_handler(char **args) {
     for (int i = 0; args[i] != NULL; i++ ){ // -> loops through wtv user types
         
@@ -170,7 +177,7 @@ static void redirect_handler(char **args) {
                 perror("Filename doesn't exist");
                 _exit(1);
             }
-            int fd = open(args[i + 1], O_RDONLY);
+            int fd = popen(args[i + 1], O_RDONLY);
             if (fd < 0){
                 perror("input"); // -> This checks if theres a valid file
                 _exit(1);
@@ -188,7 +195,7 @@ static void redirect_handler(char **args) {
                 perror("Filename doesn't exist");
                 _exit(1);
             }
-            int fd = open(args[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            int fd = popen(args[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 
             if (fd < 0){
                 perror("output error.");
@@ -204,6 +211,7 @@ static void redirect_handler(char **args) {
     }
     
 }
+*/
 
 // Helper to free cmd after every execution
 void FreeCommand(struct ShellCommand *cmd) {
