@@ -22,6 +22,7 @@ void ExecuteCommand(struct ShellCommand command); //Execute a shell command
 
 void FreeCommand(struct ShellCommand *cmd);
 
+static void redirect_handler(char **args);
 struct ShellCommand {
     char **argv;      // execvp args (argv[0] is command, last must be NULL)
     char *in_file;    // filename after <
@@ -112,6 +113,26 @@ struct ShellCommand ParseCommandLine(char* input) {
 void ExecuteCommand(struct ShellCommand command) {
     if (command.argv == NULL || command.argv[0] == NULL)
     	return;
+
+        if (strcmp(command.argv[0], "exit") == 0){
+            exit(0);
+        }
+
+    
+    if (strcmp(command.argv[0], "cd") == 0){
+        char *dir = command.argv[1];
+
+        if (dir == NULL){
+            fprintf(stderr, "cd: missing argument\n");
+            return;
+        }
+
+        if (chdir(dir) != 0){
+            fprintf(stderr, "Error %d (%s)\n", errno, strerror(errno));
+        }
+        return;
+    
+    }
     
     pid_t pid = fork();
 
@@ -139,6 +160,49 @@ void ExecuteCommand(struct ShellCommand command) {
 	}
 
 
+}
+
+static void redirect_handler(char **args) {
+    for (int i = 0; args[i] != NULL; i++ ){ // -> loops through wtv user types
+        
+        if (strcmp(args[i], "<") == 0) {
+             if (args[i + 1] == NULL){
+                perror("Filename doesn't exist");
+                _exit(1);
+            }
+            int fd = open(args[i + 1], O_RDONLY);
+            if (fd < 0){
+                perror("input"); // -> This checks if theres a valid file
+                _exit(1);
+
+            }
+            dup2(fd, STDIN_FILENO);
+            close(fd);
+            args[i] = NULL;
+            args[i+1] = NULL;
+            i += 1;
+        }
+        
+        else if (strcmp(args[i], ">") == 0)  {
+            if (args[i + 1] == NULL){
+                perror("Filename doesn't exist");
+                _exit(1);
+            }
+            int fd = open(args[i + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+
+            if (fd < 0){
+                perror("output error.");
+                _exit(1);
+        }
+        dup2(fd, STDOUT_FILENO);
+        close(fd);
+        args[i] = NULL;
+        args[i + 1] = NULL;
+        i += 1;
+        }
+            
+    }
+    
 }
 
 // Helper to free cmd after every execution
