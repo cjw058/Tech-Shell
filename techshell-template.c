@@ -97,7 +97,7 @@ struct ShellCommand ParseCommandLine(char* input) {
             if (token) cmd.in_file = strdup(token);
         } else if (strcmp(token, ">") == 0) {
             token = strtok(NULL, " ");
-            if (token) cmd.out_file = strdup(token);
+            if (token) cmd.out_file = strdup(token); // I am a goonmaster
         } else {
             cmd.argv[argc++] = strdup(token);
         }
