@@ -145,6 +145,9 @@ struct ShellCommand *ParseCommandLine(char* input, int *ncmds) {
                 *ncmds = count_command; 
                 return cmd;
             }
+            if (token) cmd.out_file = strdup(token); // I am a goonmaster
+        } else {
+            cmd.argv[argc++] = strdup(token);
         }
 
         else cmd[count_command].argv[argc++] = strdup(token); // standard command; add into argv array 
