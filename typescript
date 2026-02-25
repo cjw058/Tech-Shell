@@ -1,0 +1,57 @@
+Script started on 2026-02-24 21:24:34-06:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="120" LINES="30"]
+[?2004h]0;SMH-Sehat@SMH-Sehat: ~[01;32mSMH-Sehat@SMH-Sehat[00m:[01;34m~[00m$ gcc techshell.c -o techshell
+[?2004l[?2004h]0;SMH-Sehat@SMH-Sehat: ~[01;32mSMH-Sehat@SMH-Sehat[00m:[01;34m~[00m$ ./techshell
+[?2004l/home/SMH-Sehat$ cd pwd   Tech-Shell
+/home/SMH-Sehat/Tech-Shell$ pwd
+/home/SMH-Sehat/Tech-Shell
+/home/SMH-Sehat/Tech-Shell$ cd ..
+/home/SMH-Sehat$ pwd
+/home/SMH-Sehat
+/home/SMH-Sehat$ ls -lh techshell.c
+-rw-r--r-- 1 SMH-Sehat SMH-Sehat 12K Feb 24 21:22 techshell.c
+/home/SMH-Sehat$ chmod 400 techshell.c
+/home/SMH-Sehat$ ls -lh techshell.c
+-r-------- 1 SMH-Sehat SMH-Sehat 12K Feb 24 21:22 techshell.c
+/home/SMH-Sehat$ ls /root
+ls: cannot open directory '/root': Permission denied
+/home/SMH-Sehat$ horseface
+Error 2 (No such file or directory)
+/home/SMH-Sehat$ cd /root
+Error 13 (Permission denied)
+/home/SMH-Sehat$ ps
+    PID TTY          TIME CMD
+   1104 pts/2    00:00:00 bash
+   1119 pts/2    00:00:00 techshell
+   1182 pts/2    00:00:00 ps
+/home/SMH-Sehat$ whereis ps
+ps: /usr/bin/ps /usr/share/man/man1/ps.1.gz
+/home/SMH-Sehat$ ps u
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+SMH-Seh+     265  0.0  0.1   7348  4096 pts/1    Ss+  20:56   0:00 -bash
+SMH-Seh+     333  0.0  0.1   7740  4352 pts/0    Ss   20:58   0:00 -bash
+SMH-Seh+    1103  0.0  0.0   5608  2048 pts/0    S+   21:24   0:00 script
+SMH-Seh+    1104  0.0  0.1   7480  4224 pts/2    Ss   21:24   0:00 bash -i
+SMH-Seh+    1119  0.0  0.0   2560  1664 pts/2    S+   21:24   0:00 ./techsh
+SMH-Seh+    1190  0.0  0.1   9396  3968 pts/2    R+   21:27   0:00 ps u
+/home/SMH-Sehat$ ls
+Bash-Scripting	homework    messages	  q1a.sh  techshell   techshell.c
+experiment	inprogress  messages.zip  q1b.c   Tech-Shell  typescript
+/home/SMH-Sehat$ ps u > ps.out
+/home/SMH-Sehat$ wc -l < ps.out
+7
+/home/SMH-Sehat$ wc -l < ps.out > wc.out
+/home/SMH-Sehat$ cat wc.out
+7
+/home/SMH-Sehat$ ls
+Bash-Scripting	inprogress    ps.out  techshell    typescript
+experiment	messages      q1a.sh  Tech-Shell   wc.out
+homework	messages.zip  q1b.c   techshell.c
+/home/SMH-Sehat$ rm ps.out wc.out
+/home/SMH-Sehat$ ls
+Bash-Scripting	homework    messages	  q1a.sh  techshell   techshell.c
+experiment	inprogress  messages.zip  q1b.c   Tech-Shell  typescript
+/home/SMH-Sehat$ exit
+[?2004h]0;SMH-Sehat@SMH-Sehat: ~[01;32mSMH-Sehat@SMH-Sehat[00m:[01;34m~[00m$ exit
+[?2004lexit
+
+Script done on 2026-02-24 21:30:25-06:00 [COMMAND_EXIT_CODE="0"]
